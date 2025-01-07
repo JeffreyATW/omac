@@ -11,7 +11,7 @@ const unwrapValue = <T,>(value: T | T[]) => {
 
 let shadow = "";
 for (let i = 0; i < 10; i++) {
-  shadow += `${(shadow ? "," : "") + -i * 1}px ${i * 1}px 0 #99a`;
+  shadow += `${(shadow ? "," : "") + -i * 1}px ${i * 1}px 0 #000`;
 }
 
 function App() {
