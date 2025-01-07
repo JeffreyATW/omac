@@ -89,11 +89,6 @@ function App() {
                     <summary>Custom Scores</summary>
                     Turn on{" "}
                     <i>Options &gt; Simply Love &gt; Write Custom Scores</i>
-                    <ul>
-                      <li>
-                        If you just enabled custom scores, play a song or two
-                      </li>
-                    </ul>
                   </details>
                   <details>
                     <summary>Stepcounts</summary>
@@ -111,6 +106,10 @@ function App() {
                       <li>Restart ITGmania</li>
                     </ol>
                   </details>
+                </li>
+                <li>
+                  If you just enabled custom scores or stepcounts, play a song
+                  or two
                 </li>
                 <li>
                   Go to your ITGmania save folder
