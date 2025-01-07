@@ -1,3 +1,8 @@
+.title {
+  font-size: 2rem;
+  font-variant: small-caps;
+}
+
 .dropzone {
   inset: 0;
   position: fixed;
@@ -11,14 +16,34 @@
 }
 
 .count {
+  background-image: url("star.svg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   font-size: 2rem;
   text-align: center;
   line-height: 1.2;
+  padding: 8rem;
+  transform: rotate(-2deg);
+}
+
+.total,
+.shadow {
+  font-family: "Rammetto One", sans-serif;
+  font-size: 5rem;
+  font-weight: bold;
 }
 
 .total {
-  font-size: 5rem;
-  font-weight: bold;
+  background-image: radial-gradient(circle, yellow, red);
+  color: transparent;
+  background-clip: text;
+  position: relative;
+  -webkit-text-stroke: 4px #222;
+  z-index: 1;
+}
+
+.shadow {
+  position: absolute;
 }
 
 .copyright {

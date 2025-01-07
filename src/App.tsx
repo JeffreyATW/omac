@@ -74,6 +74,18 @@ function App() {
 
   return (
     <>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Rammetto+One&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <div
         {...getRootProps({
           className: "dropzone",
@@ -89,7 +101,7 @@ function App() {
           })}
         />
         <div className="contents">
-          <h1>One Million Arrows Challenge</h1>
+          <h1 className="title">One Million Arrows Challenge</h1>
           {total == null ? (
             <div className="instructions">
               <ol>
@@ -152,10 +164,11 @@ function App() {
             </div>
           ) : (
             <div className="count">
-              You hit
-              <div className="total" style={{ textShadow: shadow }}>
+              I hit
+              <div className="shadow" style={{ textShadow: shadow }}>
                 {totalString}
               </div>
+              <div className="total">{totalString}</div>
               arrow{total === 1 ? "" : "s"} in {currentYear}!
             </div>
           )}
