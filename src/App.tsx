@@ -9,10 +9,17 @@ const unwrapValue = <T,>(value: T | T[]) => {
   return value;
 };
 
+let shadow = "";
+for (let i = 0; i < 10; i++) {
+  shadow += `${(shadow ? "," : "") + -i * 1}px ${i * 1}px 0 #99a`;
+}
+
 function App() {
   const [total, setTotal] = useState<number | null>(null);
   const [currentYear, setCurrentYear] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const totalString = total?.toLocaleString();
 
   const handleChange = (acceptedFiles: File[]) =>
     startTransition(async () => {
@@ -146,7 +153,9 @@ function App() {
           ) : (
             <div className="count">
               You hit
-              <div className="total">{total.toLocaleString()}</div>
+              <div className="total" style={{ textShadow: shadow }}>
+                {totalString}
+              </div>
               arrow{total === 1 ? "" : "s"} in {currentYear}!
             </div>
           )}
