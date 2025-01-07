@@ -4,11 +4,13 @@ import "./App.css";
 
 function App() {
   const [total, setTotal] = useState<number | null>(null);
+  const [currentYear, setCurrentYear] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const handleChange = (acceptedFiles: File[]) =>
     startTransition(async () => {
       const currentYear = String(new Date().getFullYear());
+      setCurrentYear(currentYear);
       let total = 0;
 
       const files = await Promise.all(
@@ -144,7 +146,7 @@ function App() {
             <div className="count">
               You hit
               <div className="total">{total.toLocaleString()}</div>
-              arrow{total === 1 ? "" : "s"} this year!
+              arrow{total === 1 ? "" : "s"} in {currentYear}!
             </div>
           )}
           <address className="copyright">
