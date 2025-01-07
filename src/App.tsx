@@ -2,6 +2,13 @@ import { useState, useTransition } from "react";
 import { useDropzone } from "react-dropzone";
 import "./App.css";
 
+const unwrapValue = <T,>(value: T | T[]) => {
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+  return value;
+};
+
 function App() {
   const [total, setTotal] = useState<number | null>(null);
   const [currentYear, setCurrentYear] = useState<string | null>(null);
@@ -31,15 +38,9 @@ function App() {
         try {
           const parsed = JSON.parse(file);
           const { DateTime, Score, Steps } = parsed;
-          let dateTime: string;
           if (Steps != null) {
-            if (typeof DateTime === "string") {
-              dateTime = DateTime;
-            } else {
-              dateTime = DateTime[0];
-            }
-            if (dateTime.startsWith(currentYear)) {
-              total += Steps[0];
+            if (unwrapValue<string>(DateTime).startsWith(currentYear)) {
+              total += unwrapValue(Steps);
             }
           } else if (Score.DateTime.startsWith(currentYear)) {
             Object.entries(Score.TapNoteScores ?? {}).forEach(
