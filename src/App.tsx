@@ -28,8 +28,18 @@ function App() {
       files.forEach((file) => {
         try {
           const parsed = JSON.parse(file);
-          const { Score } = parsed;
-          if (Score.DateTime.startsWith(currentYear)) {
+          const { DateTime, Score, Steps } = parsed;
+          let dateTime: string;
+          if (Steps != null) {
+            if (typeof DateTime === "string") {
+              dateTime = DateTime;
+            } else {
+              dateTime = DateTime[0];
+            }
+            if (dateTime.startsWith(currentYear)) {
+              total += Steps[0];
+            }
+          } else if (Score.DateTime.startsWith(currentYear)) {
             Object.entries(Score.TapNoteScores ?? {}).forEach(
               ([label, value]) => {
                 if (label.match(/^W[0-9]+$/)) {
@@ -74,13 +84,33 @@ function App() {
             <div className="instructions">
               <ol>
                 <li>
-                  Enable custom scores:{" "}
-                  <i>Options &gt; Simply Love &gt; Write Custom Scores</i>
-                  <ul>
-                    <li>
-                      If you just enabled custom scores, play a song or two
-                    </li>
-                  </ul>
+                  Enable custom scores or stepcounts:
+                  <details>
+                    <summary>Custom Scores</summary>
+                    Turn on{" "}
+                    <i>Options &gt; Simply Love &gt; Write Custom Scores</i>
+                    <ul>
+                      <li>
+                        If you just enabled custom scores, play a song or two
+                      </li>
+                    </ul>
+                  </details>
+                  <details>
+                    <summary>Stepcounts</summary>
+                    <ol>
+                      <li>
+                        Download the{" "}
+                        <a href="https://github.com/kitsuneymg/simply-love-stepcount">
+                          stepcount module
+                        </a>
+                      </li>
+                      <li>
+                        Place <code>stepcount.lua</code> in the Simply Love{" "}
+                        <code>Modules</code> folder
+                      </li>
+                      <li>Restart ITGmania</li>
+                    </ol>
+                  </details>
                 </li>
                 <li>
                   Go to your ITGmania save folder
@@ -102,7 +132,8 @@ function App() {
                   profile
                 </li>
                 <li>
-                  Drag the <code>SL-Scores</code> folder onto this window, or{" "}
+                  Drag either the <code>SL-Scores</code> <em>or</em>{" "}
+                  <code>SL-Steps</code> folder onto this window, or{" "}
                   <button onClick={open} type="button">
                     click here
                   </button>{" "}
