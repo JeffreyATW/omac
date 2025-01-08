@@ -5,6 +5,7 @@ export default function Arrow({ i }: { i: number }) {
   const transform = useRef<number>(null);
   const scale = useRef<number>(null);
   const rotate = useRef<number>(null);
+  const direction = useRef<number>(null);
 
   if (transform.current === null) {
     transform.current = Math.random();
@@ -18,10 +19,14 @@ export default function Arrow({ i }: { i: number }) {
     rotate.current = Math.random() * 360;
   }
 
+  if (direction.current === null) {
+    direction.current = Math.random() < 0.5 ? -1 : 1;
+  }
+
   useEffect(() => {
     requestAnimationFrame(() => {
-      if (transform.current != null) {
-        setCounter(counter + transform.current);
+      if (transform.current != null && direction.current != null) {
+        setCounter(counter + transform.current * direction.current);
       }
     })
   }, [counter])
