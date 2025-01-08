@@ -13,6 +13,34 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding-bottom: 1rem;
+  margin: 0 auto;
+  width: fit-content;
+}
+
+.results {
+  text-align: center;
+}
+
+.url {
+  display: none;
+}
+
+.exporting {
+  background: linear-gradient(
+    to bottom,
+    rgb(181, 222, 255),
+    rgb(242, 199, 212),
+    rgb(255, 246, 219)
+  );
+
+  & .url {
+    display: block;
+  }
+
+  & .share {
+    display: none;
+  }
 }
 
 .count {
@@ -20,8 +48,8 @@
   background-repeat: no-repeat;
   background-size: 100% 100%;
   font-size: 2rem;
-  text-align: center;
   line-height: 1.2;
+  margin-bottom: 1rem;
   padding: 8rem;
   transform: rotate(-2deg);
 }

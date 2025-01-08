@@ -1,5 +1,7 @@
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useDropzone } from "react-dropzone";
+import html2canvas from  "./vendor/html2canvas";
+import { saveAs } from "file-saver";
 import "./App.css";
 
 const unwrapValue = <T,>(value: T | T[]) => {
@@ -15,11 +17,33 @@ for (let i = 0; i < 10; i++) {
 }
 
 function App() {
+  const exportRef = useRef<HTMLDivElement>(null);
   const [total, setTotal] = useState<number | null>(null);
   const [currentYear, setCurrentYear] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const totalString = total?.toLocaleString();
+
+  const handleShare = () => {
+    if (exportRef.current) {
+      setExporting(true);
+
+      setTimeout(async () => {      
+        const canvas = await html2canvas(exportRef.current);
+
+        const onBlob = (blob: Blob | null) => {
+          if (blob != null) {
+            saveAs(blob, 'omac.png');
+          }
+        };
+
+        canvas.toBlob(onBlob, "image/png", 1);
+
+        setExporting(false);
+      });
+    }
+  }
 
   const handleChange = (acceptedFiles: File[]) =>
     startTransition(async () => {
@@ -100,7 +124,7 @@ function App() {
             webkitdirectory: "true",
           })}
         />
-        <div className="contents">
+        <div className={`contents ${exporting ? "exporting" : ""}`} ref={exportRef}>
           <h1 className="title">One Million Arrows Challenge</h1>
           {total == null ? (
             <div className="instructions">
@@ -163,13 +187,19 @@ function App() {
               </ol>
             </div>
           ) : (
-            <div className="count">
-              I hit
-              <div className="shadow" style={{ textShadow: shadow }}>
-                {totalString}
+            <div className="results">
+              <div className="count">
+                I hit
+                <div className="shadow" style={{ textShadow: shadow }}>
+                  {totalString}
+                </div>
+                <div className="total">{totalString}</div>
+                arrow{total === 1 ? "" : "s"} in {currentYear}!
               </div>
-              <div className="total">{totalString}</div>
-              arrow{total === 1 ? "" : "s"} in {currentYear}!
+              <div className="url">
+                jatw.us/omac
+              </div>
+              <button className="share" onClick={handleShare}>Share</button>
             </div>
           )}
           <address className="copyright">
