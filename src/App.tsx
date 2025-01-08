@@ -100,7 +100,7 @@ function App() {
 
   return (
     <>
-      <title>One Million Arrows Challenge</title>
+      <title>One Million Arrow Challenge</title>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link
         rel="preconnect"
@@ -126,7 +126,7 @@ function App() {
           })}
         />
         <div className={`contents ${exporting ? "exporting" : ""}`} ref={exportRef}>
-          <h1 className="title">One Million Arrows Challenge</h1>
+          <h1 className="title">One Million Arrow Challenge</h1>
           {total == null ? (
             <div className="instructions">
               <ol>
