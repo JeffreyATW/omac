@@ -47,7 +47,7 @@
 }
 
 .arrowContainer {
-  background-image: url("star.svg");
+  background-image: url("assets/star.svg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   position: relative;
