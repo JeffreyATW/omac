@@ -45,7 +45,7 @@ function App() {
         try {
           const parsed = JSON.parse(file);
           const { DateTime, Score, Steps } = parsed;
-          if (Steps != null) {
+          if (DateTime != null) {
             if (unwrapValue<string>(DateTime).startsWith(currentYear)) {
               total += unwrapValue(Steps);
             }
