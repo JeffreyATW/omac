@@ -1,5 +1,6 @@
 import { useRef, useState, useTransition } from "react";
 import { useDropzone } from "react-dropzone";
+// @ts-expect-error no declaration file
 import html2canvas from  "./vendor/html2canvas";
 import { saveAs } from "file-saver";
 import "./App.css";
