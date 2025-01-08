@@ -4,6 +4,7 @@ import { useDropzone } from "react-dropzone";
 import html2canvas from  "./vendor/html2canvas";
 import { saveAs } from "file-saver";
 import "./App.css";
+import Arrow from "./Arrow";
 
 const unwrapValue = <T,>(value: T | T[]) => {
   if (Array.isArray(value)) {
@@ -99,18 +100,17 @@ function App() {
 
   return (
     <>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Rammetto+One&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+      <title>One Million Arrows Challenge</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossOrigin=""
+      />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Rammetto+One&display=swap"
+        rel="stylesheet"
+      />
       <div
         {...getRootProps({
           className: "dropzone",
@@ -189,13 +189,21 @@ function App() {
             </div>
           ) : (
             <div className="results">
-              <div className="count">
-                I hit
-                <div className="shadow" style={{ textShadow: shadow }}>
-                  {totalString}
+              <div className="arrowContainer">
+                {Array(100).fill(0).map((_, i) =>
+                  <Arrow i={i} />
+                )}
+                <div className="arrowCover" />
+                <div className="count">
+                  I hit
+                  <div className="totalContainer">
+                    <div className="shadow" style={{ textShadow: shadow }}>
+                      {totalString}
+                    </div>
+                    <div className="total">{totalString}</div>
+                    arrow{total === 1 ? "" : "s"} in {currentYear}!
+                  </div>
                 </div>
-                <div className="total">{totalString}</div>
-                arrow{total === 1 ? "" : "s"} in {currentYear}!
               </div>
               <div className="url">
                 jatw.us/omac
