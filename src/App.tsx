@@ -1,10 +1,12 @@
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useDropzone } from "react-dropzone";
 // @ts-expect-error no declaration file
 import html2canvas from "./vendor/html2canvas";
 import { saveAs } from "file-saver";
-import "./App.css";
 import Arrow from "./Arrow";
+import copy from "./assets/copy.svg";
+import download from "./assets/download.svg";
+import "./App.css";
 
 const unwrapValue = <T,>(value: T | T[]) => {
   if (Array.isArray(value)) {
@@ -23,6 +25,7 @@ function App() {
   const [total, setTotal] = useState<number | null>(null);
   const [currentYear, setCurrentYear] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const totalString = total?.toLocaleString();
@@ -52,12 +55,17 @@ function App() {
   };
 
   const handleCopy = () => {
-    doExport((blob) => {
-      navigator.clipboard.write([
-        new ClipboardItem({
-          "image/png": blob,
-        }),
-      ]);
+    doExport(async (blob) => {
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            "image/png": blob,
+          }),
+        ]);
+        setCopied(true);
+      } catch (_) {
+        alert("Can't copy. Try another browser.");
+      }
     });
   };
 
@@ -105,6 +113,29 @@ function App() {
 
       setTotal(total);
     });
+
+  const handleFocus = function (event: React.FocusEvent) {
+    const { target } = event;
+    if (target != null) {
+      window.setTimeout(function () {
+        const range = document.createRange();
+        range.selectNodeContents(target);
+        const sel = window.getSelection();
+        if (sel != null) {
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (copied) {
+      setTimeout(() => {
+        setCopied(false);
+      }, 5000);
+    }
+  }, [copied]);
 
   const { getRootProps, getInputProps, open } = useDropzone({
     noClick: true,
@@ -210,7 +241,10 @@ function App() {
                   ))}
                 <div className="arrowCover" />
                 <div className="count">
-                  I hit
+                  <span className="name" contentEditable onFocus={handleFocus}>
+                    I
+                  </span>{" "}
+                  hit
                   <div className="totalContainer">
                     <div className="shadow" style={{ textShadow: shadow }}>
                       {totalString}
@@ -222,8 +256,14 @@ function App() {
               </div>
               <div className="url">jatw.us/omac</div>
               <div className="share">
-                <button onClick={handleCopy}>Copy</button>
-                <button onClick={handleDownload}>Download</button>
+                <button onClick={handleCopy}>
+                  <img alt="" src={copy} />
+                  {copied ? "Copied!" : "Copy"}
+                </button>
+                <button onClick={handleDownload}>
+                  <img alt="" src={download} />
+                  Download
+                </button>
               </div>
             </div>
           )}

@@ -72,8 +72,14 @@
   position: absolute;
 }
 
+.name {
+  position: relative;
+  z-index: 1;
+}
+
 .totalContainer {
   position: relative;
+  z-index: 0;
 }
 
 .count {
@@ -118,6 +124,12 @@
   display: flex;
   gap: 1rem;
   justify-content: center;
+
+  & button {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+  }
 }
 
 .copyright {
