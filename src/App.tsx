@@ -1,7 +1,7 @@
 import { useRef, useState, useTransition } from "react";
 import { useDropzone } from "react-dropzone";
 // @ts-expect-error no declaration file
-import html2canvas from  "./vendor/html2canvas";
+import html2canvas from "./vendor/html2canvas";
 import { saveAs } from "file-saver";
 import "./App.css";
 import Arrow from "./Arrow";
@@ -27,16 +27,16 @@ function App() {
 
   const totalString = total?.toLocaleString();
 
-  const handleShare = () => {
+  const doExport = (cb: (blob: Blob) => void) => {
     if (exportRef.current) {
       setExporting(true);
 
-      setTimeout(async () => {      
+      setTimeout(async () => {
         const canvas = await html2canvas(exportRef.current);
 
         const onBlob = (blob: Blob | null) => {
           if (blob != null) {
-            saveAs(blob, 'omac.png');
+            cb(blob);
           }
         };
 
@@ -45,7 +45,21 @@ function App() {
         setExporting(false);
       });
     }
-  }
+  };
+
+  const handleDownload = () => {
+    doExport((blob) => saveAs(blob, "omac.png"));
+  };
+
+  const handleCopy = () => {
+    doExport((blob) => {
+      navigator.clipboard.write([
+        new ClipboardItem({
+          "image/png": blob,
+        }),
+      ]);
+    });
+  };
 
   const handleChange = (acceptedFiles: File[]) =>
     startTransition(async () => {
@@ -102,11 +116,7 @@ function App() {
     <>
       <title>One Million Arrow Challenge</title>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossOrigin=""
-      />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <link
         href="https://fonts.googleapis.com/css2?family=Rammetto+One&display=swap"
         rel="stylesheet"
@@ -125,7 +135,10 @@ function App() {
             webkitdirectory: "true",
           })}
         />
-        <div className={`contents ${exporting ? "exporting" : ""}`} ref={exportRef}>
+        <div
+          className={`contents ${exporting ? "exporting" : ""}`}
+          ref={exportRef}
+        >
           <h1 className="title">One Million Arrow Challenge</h1>
           {total == null ? (
             <div className="instructions">
@@ -190,9 +203,11 @@ function App() {
           ) : (
             <div className="results">
               <div className="arrowContainer">
-                {Array(100).fill(0).map((_, i) =>
-                  <Arrow i={i} />
-                )}
+                {Array(100)
+                  .fill(0)
+                  .map((_, i) => (
+                    <Arrow key={i} i={i} />
+                  ))}
                 <div className="arrowCover" />
                 <div className="count">
                   I hit
@@ -205,10 +220,11 @@ function App() {
                   </div>
                 </div>
               </div>
-              <div className="url">
-                jatw.us/omac
+              <div className="url">jatw.us/omac</div>
+              <div className="share">
+                <button onClick={handleCopy}>Copy</button>
+                <button onClick={handleDownload}>Download</button>
               </div>
-              <button className="share" onClick={handleShare}>Share</button>
             </div>
           )}
           <address className="copyright">

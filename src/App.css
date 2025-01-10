@@ -62,7 +62,12 @@
 }
 
 .arrowCover {
-  background: radial-gradient(circle, #ffffaa 0%, #ffffaa 15%, rgb(255,255,170,0) 40%);
+  background: radial-gradient(
+    circle,
+    #ffffaa 0%,
+    #ffffaa 15%,
+    rgb(255, 255, 170, 0) 40%
+  );
   inset: 0;
   position: absolute;
 }
@@ -107,6 +112,12 @@
 .share {
   position: relative;
   z-index: 1;
+}
+
+.share {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
 }
 
 .copyright {
