@@ -89,7 +89,7 @@
   margin-bottom: 1rem;
   padding: 8rem 6rem;
   text-shadow: #fff -2px 2px;
-  transform: rotate(-2deg);
+  animation: wobble 10s ease-in-out;
 }
 
 .total,
@@ -153,5 +153,19 @@
 
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes wobble {
+  0% {
+    transform: rotate(-2deg);
+  }
+
+  50% {
+    transform: rotate(2deg);
+  }
+
+  100% {
+    transform: rotate(-2deg);
   }
 }
