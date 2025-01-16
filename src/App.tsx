@@ -31,6 +31,14 @@ const localStorageName = localStorage.getItem("name");
 
 const currentYear = String(new Date().getFullYear());
 
+function formatDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}${month}${day}`;
+}
+
 function App() {
   const exportRef = useRef<HTMLDivElement>(null);
   const [name, setName] = useState(localStorageName);
@@ -78,7 +86,11 @@ function App() {
   };
 
   const handleDownload = () => {
-    doExport((blob) => saveAs(blob, "omac.png"));
+    let date = year;
+    if (date === currentYear) {
+      date = formatDate();
+    }
+    doExport((blob) => saveAs(blob, `omac-${date}.png`));
   };
 
   const handleCopy = () => {
