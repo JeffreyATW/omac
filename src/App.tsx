@@ -1,4 +1,11 @@
-import { FormEvent, useEffect, useRef, useState, useTransition } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useDropzone } from "react-dropzone";
 // @ts-expect-error no declaration file
 import html2canvas from "./vendor/html2canvas";
@@ -20,18 +27,35 @@ for (let i = 0; i < 10; i++) {
   shadow += `${(shadow ? "," : "") + -i * 1}px ${i * 1}px 0 #000`;
 }
 
-const localStorageName = localStorage.getItem("name") || "I";
+const localStorageName = localStorage.getItem("name");
+
+const currentYear = String(new Date().getFullYear());
 
 function App() {
   const exportRef = useRef<HTMLDivElement>(null);
   const [name, setName] = useState(localStorageName);
   const [total, setTotal] = useState<number | null>(null);
-  const [currentYear, setCurrentYear] = useState<string | null>(null);
+  const [year, setYear] = useState(currentYear);
   const [exporting, setExporting] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const totalString = total?.toLocaleString();
+
+  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newName = event.target.value;
+    if (newName != null) {
+      setName(newName);
+      localStorage.setItem("name", newName);
+    }
+  };
+
+  const handleYearChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const newYear = event.target.value;
+    if (newYear != null) {
+      setYear(newYear);
+    }
+  };
 
   const doExport = (cb: (blob: Blob) => void) => {
     if (exportRef.current) {
@@ -72,10 +96,7 @@ function App() {
     });
   };
 
-  const handleChange = (acceptedFiles: File[]) => {
-    const currentYear = String(new Date().getFullYear());
-    setCurrentYear(currentYear);
-
+  const handleChange = (acceptedFiles: File[]) =>
     startTransition(async () => {
       let total = 0;
 
@@ -98,10 +119,10 @@ function App() {
           const parsed = JSON.parse(file);
           const { DateTime, Score, Steps } = parsed;
           if (DateTime != null) {
-            if (unwrapValue<string>(DateTime).startsWith(currentYear)) {
+            if (unwrapValue<string>(DateTime).startsWith(year)) {
               total += unwrapValue(Steps);
             }
-          } else if (Score.DateTime.startsWith(currentYear)) {
+          } else if (Score.DateTime.startsWith(year)) {
             Object.entries(Score.TapNoteScores ?? {}).forEach(
               ([label, value]) => {
                 if (label.match(/^W[0-9]+$/)) {
@@ -117,7 +138,6 @@ function App() {
 
       setTotal(total);
     });
-  };
 
   const handleFocus = (event: React.FocusEvent) => {
     const { target } = event;
@@ -186,6 +206,21 @@ function App() {
           <h1 className="title">One Million Arrow Challenge</h1>
           {total == null ? (
             <div className="instructions">
+              <h2 className="subtitle">
+                How many arrows did{" "}
+                <input onChange={handleNameChange} value={name ?? "you"} /> hit
+                in{" "}
+                <select onChange={handleYearChange} value={year}>
+                  {Array(5)
+                    .fill(0)
+                    .map((_, i) => {
+                      const yearStr = String(Number(year) - i);
+                      return <option value={yearStr}>{yearStr}</option>;
+                    })}
+                </select>
+                ?
+              </h2>
+              <h3>Instructions</h3>
               <ol>
                 <li>
                   Enable custom scores or stepcounts:
@@ -260,7 +295,7 @@ function App() {
                     onBlur={handleBlur}
                     onFocus={handleFocus}
                   >
-                    {name}
+                    {name ?? "I"}
                   </span>{" "}
                   hit
                   <div className="totalContainer">
@@ -268,7 +303,7 @@ function App() {
                       {totalString}
                     </div>
                     <div className="total">{totalString}</div>
-                    arrow{total === 1 ? "" : "s"} in {currentYear}!
+                    arrow{total === 1 ? "" : "s"} in {year}!
                   </div>
                 </div>
               </div>
