@@ -59,6 +59,7 @@
   top: 50%;
   position: absolute;
   will-change: transform;
+  animation: rotate infinite linear;
 }
 
 .arrowCover {
@@ -86,7 +87,7 @@
   font-size: 2rem;
   line-height: 1.2;
   margin-bottom: 1rem;
-  padding: 8rem;
+  padding: 8rem 6rem;
   text-shadow: #fff -2px 2px;
   transform: rotate(-2deg);
 }
@@ -142,5 +143,15 @@
     color: inherit;
     font-weight: inherit;
     text-decoration: underline;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }

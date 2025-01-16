@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 export default function Arrow({ i }: { i: number }) {
-  const [counter, setCounter] = useState(0);
   const transform = useRef<number>(null);
   const scale = useRef<number>(null);
   const rotate = useRef<number>(null);
-  const direction = useRef<number>(null);
+  const direction = useRef<string>(null);
 
   if (transform.current === null) {
-    transform.current = Math.random();
+    transform.current = Math.random() * (1 - 0.4) + 0.4;
   }
 
   if (scale.current === null) {
@@ -20,32 +19,23 @@ export default function Arrow({ i }: { i: number }) {
   }
 
   if (direction.current === null) {
-    direction.current = Math.random() < 0.5 ? -1 : 1;
+    direction.current = Math.random() < 0.5 ? "reverse" : "normal";
   }
-
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      if (transform.current != null && direction.current != null) {
-        setCounter(counter + transform.current * direction.current);
-      }
-    })
-  }, [counter])
 
   const translate = transform.current * 500;
 
-  return <img className="arrow" src={`arrow${i % 6 + 1}.png`} style={{
-    transform: `
-      translate(
-        0,
-        ${translate}px
-      )
-      scale(
-        ${scale.current}
-      )
-      rotate(
-        ${rotate.current + counter}deg
-      )
-    `,
-    transformOrigin: `center -${translate}px`,
-  }}/>;
+  return (
+    <img
+      className="arrow"
+      src={`arrow${(i % 6) + 1}.png`}
+      style={{
+        animationDelay: `-${rotate.current / 10}s`,
+        animationDirection: direction.current,
+        animationDuration: `${transform.current * 10}s`,
+        scale: scale.current,
+        translate: `0 ${translate}px`,
+        transformOrigin: `center -${translate}px`,
+      }}
+    />
+  );
 }
