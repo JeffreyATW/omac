@@ -250,7 +250,7 @@ function App() {
                 {Array(Math.min(Math.round(total / 1000), 1000))
                   .fill(0)
                   .map((_, i) => (
-                    <Arrow key={i} i={i} />
+                    <Arrow key={i} exporting={exporting} i={i} />
                   ))}
                 <div className="arrowCover" />
                 <div className="count">
