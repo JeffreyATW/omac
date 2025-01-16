@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useTransition } from "react";
+import { FormEvent, useEffect, useRef, useState, useTransition } from "react";
 import { useDropzone } from "react-dropzone";
 // @ts-expect-error no declaration file
 import html2canvas from "./vendor/html2canvas";
@@ -20,8 +20,11 @@ for (let i = 0; i < 10; i++) {
   shadow += `${(shadow ? "," : "") + -i * 1}px ${i * 1}px 0 #000`;
 }
 
+const localStorageName = localStorage.getItem("name") || "I";
+
 function App() {
   const exportRef = useRef<HTMLDivElement>(null);
+  const [name, setName] = useState(localStorageName);
   const [total, setTotal] = useState<number | null>(null);
   const [currentYear, setCurrentYear] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
@@ -69,10 +72,11 @@ function App() {
     });
   };
 
-  const handleChange = (acceptedFiles: File[]) =>
+  const handleChange = (acceptedFiles: File[]) => {
+    const currentYear = String(new Date().getFullYear());
+    setCurrentYear(currentYear);
+
     startTransition(async () => {
-      const currentYear = String(new Date().getFullYear());
-      setCurrentYear(currentYear);
       let total = 0;
 
       const files = await Promise.all(
@@ -113,11 +117,12 @@ function App() {
 
       setTotal(total);
     });
+  };
 
-  const handleFocus = function (event: React.FocusEvent) {
+  const handleFocus = (event: React.FocusEvent) => {
     const { target } = event;
     if (target != null) {
-      window.setTimeout(function () {
+      window.setTimeout(() => {
         const range = document.createRange();
         range.selectNodeContents(target);
         const sel = window.getSelection();
@@ -126,6 +131,14 @@ function App() {
           sel.addRange(range);
         }
       });
+    }
+  };
+
+  const handleBlur = (event: FormEvent<HTMLSpanElement>) => {
+    const newName = event.currentTarget.textContent;
+    if (newName != null) {
+      setName(newName);
+      localStorage.setItem("name", newName);
     }
   };
 
@@ -241,8 +254,13 @@ function App() {
                   ))}
                 <div className="arrowCover" />
                 <div className="count">
-                  <span className="name" contentEditable onFocus={handleFocus}>
-                    I
+                  <span
+                    className="name"
+                    contentEditable
+                    onBlur={handleBlur}
+                    onFocus={handleFocus}
+                  >
+                    {name}
                   </span>{" "}
                   hit
                   <div className="totalContainer">
