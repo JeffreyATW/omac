@@ -247,7 +247,7 @@ function App() {
           ) : (
             <div className="results">
               <div className="arrowContainer">
-                {Array(Math.min(Math.round(total / 1000), 1000))
+                {Array(100)
                   .fill(0)
                   .map((_, i) => (
                     <Arrow key={i} i={i} />
