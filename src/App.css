@@ -17,10 +17,6 @@
   & input {
     width: 150px;
   }
-
-  & select {
-    vertical-align: middle;
-  }
 }
 
 .dropzone {
@@ -39,7 +35,7 @@
 }
 
 .instructions {
-  ol > li {
+  & > ol > li {
     margin-bottom: 0.5rem;
   }
 }
@@ -113,7 +109,7 @@
   margin-bottom: 1rem;
   padding: 8rem 6rem;
   text-shadow: #fff -2px 2px;
-  animation: wobble 10s ease-in-out;
+  animation: wobble 10s ease-in-out infinite;
 }
 
 .total,

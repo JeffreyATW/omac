@@ -1,19 +1,10 @@
-import {
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import { useRef, useState, useTransition } from "react";
 import { useDropzone } from "react-dropzone";
-// @ts-expect-error no declaration file
-import html2canvas from "./vendor/html2canvas";
-import { saveAs } from "file-saver";
-import Arrow from "./Arrow";
-import copy from "./assets/copy.svg";
-import download from "./assets/download.svg";
 import "./App.css";
+import Instructions from "./components/Instructions";
+import Results from "./components/Results";
+import { useAtomValue } from "jotai";
+import { exportingAtom, yearAtom } from "./state";
 
 const unwrapValue = <T,>(value: T | T[]) => {
   if (Array.isArray(value)) {
@@ -22,93 +13,16 @@ const unwrapValue = <T,>(value: T | T[]) => {
   return value;
 };
 
-let shadow = "";
-for (let i = 0; i < 10; i++) {
-  shadow += `${(shadow ? "," : "") + -i * 1}px ${i * 1}px 0 #000`;
-}
-
-const localStorageName = localStorage.getItem("name");
-
-const currentYear = String(new Date().getFullYear());
-
-function formatDate() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${year}${month}${day}`;
-}
-
 function App() {
   const exportRef = useRef<HTMLDivElement>(null);
-  const [name, setName] = useState(localStorageName);
   const [total, setTotal] = useState<number | null>(null);
-  const [year, setYear] = useState(currentYear);
-  const [exporting, setExporting] = useState(false);
-  const [copied, setCopied] = useState(false);
+
+  const year = useAtomValue(yearAtom);
+  const exporting = useAtomValue(exportingAtom);
+
   const [isPending, startTransition] = useTransition();
 
-  const totalString = total?.toLocaleString();
-
-  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newName = event.target.value;
-    if (newName != null) {
-      setName(newName);
-      localStorage.setItem("name", newName);
-    }
-  };
-
-  const handleYearChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const newYear = event.target.value;
-    if (newYear != null) {
-      setYear(newYear);
-    }
-  };
-
-  const doExport = (cb: (blob: Blob) => void) => {
-    if (exportRef.current) {
-      setExporting(true);
-
-      setTimeout(async () => {
-        const canvas = await html2canvas(exportRef.current);
-
-        const onBlob = (blob: Blob | null) => {
-          if (blob != null) {
-            cb(blob);
-          }
-        };
-
-        canvas.toBlob(onBlob, "image/png", 1);
-
-        setExporting(false);
-      });
-    }
-  };
-
-  const handleDownload = () => {
-    let date = year;
-    if (date === currentYear) {
-      date = formatDate();
-    }
-    doExport((blob) => saveAs(blob, `omac-${date}.png`));
-  };
-
-  const handleCopy = () => {
-    doExport(async (blob) => {
-      try {
-        await navigator.clipboard.write([
-          new ClipboardItem({
-            "image/png": blob,
-          }),
-        ]);
-        setCopied(true);
-      } catch (_) {
-        alert("Can't copy. Try another browser.");
-      }
-    });
-  };
-
-  const handleChange = (acceptedFiles: File[]) =>
+  const handleDrop = (acceptedFiles: File[]) =>
     startTransition(async () => {
       let total = 0;
 
@@ -151,41 +65,10 @@ function App() {
       setTotal(total);
     });
 
-  const handleFocus = (event: React.FocusEvent) => {
-    const { target } = event;
-    if (target != null) {
-      window.setTimeout(() => {
-        const range = document.createRange();
-        range.selectNodeContents(target);
-        const sel = window.getSelection();
-        if (sel != null) {
-          sel.removeAllRanges();
-          sel.addRange(range);
-        }
-      });
-    }
-  };
-
-  const handleBlur = (event: FormEvent<HTMLSpanElement>) => {
-    const newName = event.currentTarget.textContent;
-    if (newName != null) {
-      setName(newName);
-      localStorage.setItem("name", newName);
-    }
-  };
-
-  useEffect(() => {
-    if (copied) {
-      setTimeout(() => {
-        setCopied(false);
-      }, 5000);
-    }
-  }, [copied]);
-
   const { getRootProps, getInputProps, open } = useDropzone({
     noClick: true,
     noKeyboard: true,
-    onDrop: handleChange,
+    onDrop: handleDrop,
   });
 
   return (
@@ -217,120 +100,9 @@ function App() {
         >
           <h1 className="title">One Million Arrow Challenge</h1>
           {total == null ? (
-            <div className="instructions">
-              <h2 className="subtitle">
-                How many arrows did{" "}
-                <input onChange={handleNameChange} value={name ?? "you"} /> hit
-                in{" "}
-                <select onChange={handleYearChange} value={year}>
-                  {Array(5)
-                    .fill(0)
-                    .map((_, i) => {
-                      const yearStr = String(Number(year) - i);
-                      return <option value={yearStr}>{yearStr}</option>;
-                    })}
-                </select>
-                ?
-              </h2>
-              <h3>Instructions</h3>
-              <ol>
-                <li>
-                  Enable custom scores or stepcounts:
-                  <details>
-                    <summary>Custom Scores</summary>
-                    Turn on{" "}
-                    <i>Options &gt; Simply Love &gt; Write Custom Scores</i>
-                  </details>
-                  <details>
-                    <summary>Stepcounts</summary>
-                    <ol>
-                      <li>
-                        Download the{" "}
-                        <a href="https://github.com/kitsuneymg/simply-love-stepcount">
-                          stepcount module
-                        </a>
-                      </li>
-                      <li>
-                        Place <code>stepcount.lua</code> in the Simply Love{" "}
-                        <code>Modules</code> folder
-                      </li>
-                      <li>Restart ITGmania</li>
-                    </ol>
-                  </details>
-                </li>
-                <li>
-                  If you just enabled custom scores or stepcounts, play a song
-                  or two
-                </li>
-                <li>
-                  Go to your ITGmania save folder
-                  <ul>
-                    <li>
-                      Windows: <code>%APPDATA%/ITGmania/Save</code>
-                    </li>
-                    <li>
-                      Linux: <code>~/.itgmania/Save</code>
-                    </li>
-                    <li>
-                      macOS: <code>~/Library/Preferences/ITGmania</code>
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  Go to <code>LocalProfiles/00000000</code> inside the save
-                  folder, replacing the 0's with the correct number for your
-                  profile
-                </li>
-                <li>
-                  Drag either the <code>SL-Scores</code> <em>or</em>{" "}
-                  <code>SL-Steps</code> folder onto this window, or{" "}
-                  <button onClick={open} type="button">
-                    click here
-                  </button>{" "}
-                  to navigate to it
-                </li>
-              </ol>
-            </div>
+            <Instructions open={open} />
           ) : (
-            <div className="results">
-              <div className="arrowContainer">
-                {Array(Math.min(Math.round(total / 1000), 1000))
-                  .fill(0)
-                  .map((_, i) => (
-                    <Arrow key={i} exporting={exporting} i={i} />
-                  ))}
-                <div className="arrowCover" />
-                <div className="count">
-                  <span
-                    className="name"
-                    contentEditable
-                    onBlur={handleBlur}
-                    onFocus={handleFocus}
-                  >
-                    {name ?? "I"}
-                  </span>{" "}
-                  hit
-                  <div className="totalContainer">
-                    <div className="shadow" style={{ textShadow: shadow }}>
-                      {totalString}
-                    </div>
-                    <div className="total">{totalString}</div>
-                    arrow{total === 1 ? "" : "s"} in {year}!
-                  </div>
-                </div>
-              </div>
-              <div className="url">jatw.us/omac</div>
-              <div className="share">
-                <button onClick={handleCopy}>
-                  <img alt="" src={copy} />
-                  {copied ? "Copied!" : "Copy"}
-                </button>
-                <button onClick={handleDownload}>
-                  <img alt="" src={download} />
-                  Download
-                </button>
-              </div>
-            </div>
+            <Results exportRef={exportRef} total={total} />
           )}
           <address className="copyright">
             © <a href="https://jeffreyatw.com">JeffreyATW</a>.{" "}
