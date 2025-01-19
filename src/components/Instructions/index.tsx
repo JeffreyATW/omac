@@ -1,42 +1,15 @@
-import { useAtom } from "jotai";
-import { nameAtom, yearAtom } from "../state";
-import { ChangeEvent } from "react";
+import NameField from "../NameField";
+import YearSelect from "../YearSelect";
+
+import "./index.css";
 
 export default function Instructions({ open }: { open: () => void }) {
-  const [name, setName] = useAtom(nameAtom);
-  const [year, setYear] = useAtom(yearAtom);
-
-  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newName = event.target.value;
-    if (newName != null) {
-      setName(newName);
-      if (newName !== "you" && newName !== "") {
-        localStorage.setItem("name", newName);
-      }
-    }
-  };
-
-  const handleYearChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const newYear = event.target.value;
-    if (newYear != null) {
-      setYear(newYear);
-    }
-  };
-
   return (
     <div className="instructions">
-      <h2 className="subtitle">
+      <h2 className="instructions__subtitle">
         How many arrows did{" "}
-        <input onChange={handleNameChange} value={name ?? "you"} /> hit in{" "}
-        <select onChange={handleYearChange} value={year}>
-          {Array(5)
-            .fill(0)
-            .map((_, i) => {
-              const yearStr = String(Number(year) - i);
-              return <option value={yearStr}>{yearStr}</option>;
-            })}
-        </select>
-        ?
+        <NameField className="instructions__name" defaultValue="you" /> hit in{" "}
+        <YearSelect className="instructions__year" />?
       </h2>
       <h3>Instructions</h3>
       <ol>

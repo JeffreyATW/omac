@@ -1,0 +1,87 @@
+.results {
+  position: relative;
+  text-align: center;
+}
+
+.results__arrow-container {
+  background-image: url("../../assets/star.svg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: relative;
+  z-index: 0;
+}
+
+.results__arrow-cover {
+  background: radial-gradient(
+    circle,
+    #ffffaa 0%,
+    #ffffaa 15%,
+    rgb(255, 255, 170, 0) 40%
+  );
+  inset: 0;
+  position: absolute;
+}
+
+.results__name {
+  position: relative;
+  z-index: 1;
+}
+
+.results__total-container {
+  position: relative;
+  z-index: 0;
+}
+
+.results__count {
+  font-size: 2rem;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  padding: 8rem 6rem;
+  text-shadow: #fff -2px 2px;
+  animation: wobble 10s ease-in-out infinite;
+}
+
+.results__total,
+.results__shadow {
+  font-family: "Rammetto One", sans-serif;
+  font-size: 5rem;
+  font-weight: bold;
+  text-shadow: none;
+}
+
+.results__total {
+  background-image: radial-gradient(circle, yellow, red);
+  color: transparent;
+  background-clip: text;
+  position: relative;
+  -webkit-text-stroke: 4px #222;
+  z-index: 1;
+}
+
+.results__shadow {
+  opacity: 0.3;
+  position: absolute;
+  width: 100%;
+}
+
+.results__url,
+.results__share {
+  position: relative;
+  z-index: 1;
+}
+
+.results__url {
+  display: none;
+}
+
+.results__share {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+
+  & button {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+  }
+}

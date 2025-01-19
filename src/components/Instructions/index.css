@@ -1,0 +1,26 @@
+.instructions {
+  & > ol > li {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.instructions__subtitle {
+  margin: 0;
+  text-align: center;
+
+  & input,
+  & select {
+    font-size: inherit;
+  }
+
+  & input {
+    width: 150px;
+  }
+}
+
+.instructions__name,
+.instructions__year {
+  background: white;
+  border-bottom: 3px solid currentColor;
+  padding: 0.5rem;
+}

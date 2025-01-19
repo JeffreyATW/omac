@@ -1,5 +1,7 @@
 import { useRef } from "react";
 
+import "./index.css";
+
 export default function Arrow({
   exporting,
   i,

@@ -4,7 +4,8 @@ import "./App.css";
 import Instructions from "./components/Instructions";
 import Results from "./components/Results";
 import { useAtomValue } from "jotai";
-import { exportingAtom, yearAtom } from "./state";
+import { exportingAtom } from "./state";
+import { Totals } from "./types";
 
 const unwrapValue = <T,>(value: T | T[]) => {
   if (Array.isArray(value)) {
@@ -15,16 +16,15 @@ const unwrapValue = <T,>(value: T | T[]) => {
 
 function App() {
   const exportRef = useRef<HTMLDivElement>(null);
-  const [total, setTotal] = useState<number | null>(null);
+  const [totals, setTotals] = useState<Totals | null>(null);
 
-  const year = useAtomValue(yearAtom);
   const exporting = useAtomValue(exportingAtom);
 
   const [isPending, startTransition] = useTransition();
 
   const handleDrop = (acceptedFiles: File[]) =>
     startTransition(async () => {
-      let total = 0;
+      const totals: Totals = {};
 
       const files = await Promise.all(
         [...(acceptedFiles ?? [])]?.map(
@@ -45,14 +45,14 @@ function App() {
           const parsed = JSON.parse(file);
           const { DateTime, Score, Steps } = parsed;
           if (DateTime != null) {
-            if (unwrapValue<string>(DateTime).startsWith(year)) {
-              total += unwrapValue(Steps);
-            }
-          } else if (Score.DateTime.startsWith(year)) {
+            const year = unwrapValue<string>(DateTime).substring(0, 4);
+            totals[year] = (totals[year] ?? 0) + unwrapValue(Steps);
+          } else {
+            const year = Score.DateTime.substring(0, 4);
             Object.entries(Score.TapNoteScores ?? {}).forEach(
               ([label, value]) => {
                 if (label.match(/^W[0-9]+$/)) {
-                  total += value as number;
+                  totals[year] = (totals[year] ?? 0) + (value as number);
                 }
               }
             );
@@ -62,7 +62,7 @@ function App() {
         }
       });
 
-      setTotal(total);
+      setTotals(totals);
     });
 
   const { getRootProps, getInputProps, open } = useDropzone({
@@ -99,10 +99,10 @@ function App() {
           ref={exportRef}
         >
           <h1 className="title">One Million Arrow Challenge</h1>
-          {total == null ? (
+          {totals == null ? (
             <Instructions open={open} />
           ) : (
-            <Results exportRef={exportRef} total={total} />
+            <Results exportRef={exportRef} totals={totals} />
           )}
           <address className="copyright">
             © <a href="https://jeffreyatw.com">JeffreyATW</a>.{" "}

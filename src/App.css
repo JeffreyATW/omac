@@ -5,20 +5,6 @@
   z-index: 1;
 }
 
-.subtitle {
-  margin: 0;
-  text-align: center;
-
-  & input,
-  & select {
-    font-size: inherit;
-  }
-
-  & input {
-    width: 150px;
-  }
-}
-
 .dropzone {
   inset: 0;
   position: fixed;
@@ -34,21 +20,6 @@
   width: 600px;
 }
 
-.instructions {
-  & > ol > li {
-    margin-bottom: 0.5rem;
-  }
-}
-
-.results {
-  position: relative;
-  text-align: center;
-}
-
-.url {
-  display: none;
-}
-
 .exporting {
   background: linear-gradient(
     to bottom,
@@ -57,99 +28,12 @@
     rgb(255, 246, 219)
   );
 
-  & .url {
+  & .results__url {
     display: block;
   }
 
-  & .share {
+  & .results__share {
     display: none;
-  }
-}
-
-.arrowContainer {
-  background-image: url("assets/star.svg");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  position: relative;
-  z-index: 0;
-}
-
-.arrow {
-  left: calc(50% - 64px);
-  top: 50%;
-  position: absolute;
-  will-change: transform;
-  animation: rotate infinite linear;
-}
-
-.arrowCover {
-  background: radial-gradient(
-    circle,
-    #ffffaa 0%,
-    #ffffaa 15%,
-    rgb(255, 255, 170, 0) 40%
-  );
-  inset: 0;
-  position: absolute;
-}
-
-.name {
-  position: relative;
-  z-index: 1;
-}
-
-.totalContainer {
-  position: relative;
-  z-index: 0;
-}
-
-.count {
-  font-size: 2rem;
-  line-height: 1.2;
-  margin-bottom: 1rem;
-  padding: 8rem 6rem;
-  text-shadow: #fff -2px 2px;
-  animation: wobble 10s ease-in-out infinite;
-}
-
-.total,
-.shadow {
-  font-family: "Rammetto One", sans-serif;
-  font-size: 5rem;
-  font-weight: bold;
-  text-shadow: none;
-}
-
-.total {
-  background-image: radial-gradient(circle, yellow, red);
-  color: transparent;
-  background-clip: text;
-  position: relative;
-  -webkit-text-stroke: 4px #222;
-  z-index: 1;
-}
-
-.shadow {
-  opacity: 0.3;
-  position: absolute;
-  width: 100%;
-}
-
-.url,
-.share {
-  position: relative;
-  z-index: 1;
-}
-
-.share {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-
-  & button {
-    align-items: center;
-    display: flex;
-    gap: 0.5rem;
   }
 }
 
@@ -163,16 +47,6 @@
     color: inherit;
     font-weight: inherit;
     text-decoration: underline;
-  }
-}
-
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
   }
 }
 

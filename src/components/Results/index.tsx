@@ -1,14 +1,19 @@
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { saveAs } from "file-saver";
-import Arrow from "./Arrow";
+import Arrow from "../Arrow";
 import { useAtom, useAtomValue } from "jotai";
-import { exportingAtom, nameAtom, yearAtom } from "../state";
+import { exportingAtom, yearAtom } from "../../state";
 // @ts-expect-error no declaration file
-import html2canvas from "../vendor/html2canvas";
+import html2canvas from "../../vendor/html2canvas";
 
-import copy from "../assets/copy.svg";
-import download from "../assets/download.svg";
-import currentYear from "../services/currentYear";
+import copy from "../../assets/copy.svg";
+import download from "../../assets/download.svg";
+import { CURRENT_YEAR } from "../../services/constants";
+import { Totals } from "../../types";
+import NameField from "../NameField";
+import YearSelect from "../YearSelect";
+
+import "./index.css";
 
 function formatDate() {
   const today = new Date();
@@ -25,41 +30,16 @@ for (let i = 0; i < 10; i++) {
 
 export default function Results({
   exportRef,
-  total,
+  totals,
 }: {
   exportRef: React.RefObject<HTMLDivElement | null>;
-  total: number;
+  totals: Totals;
 }) {
   const [copied, setCopied] = useState(false);
-
-  const [name, setName] = useAtom(nameAtom);
   const year = useAtomValue(yearAtom);
   const [exporting, setExporting] = useAtom(exportingAtom);
 
-  const totalString = total.toLocaleString();
-
-  const handleFocus = (event: React.FocusEvent) => {
-    const { target } = event;
-    if (target != null) {
-      window.setTimeout(() => {
-        const range = document.createRange();
-        range.selectNodeContents(target);
-        const sel = window.getSelection();
-        if (sel != null) {
-          sel.removeAllRanges();
-          sel.addRange(range);
-        }
-      });
-    }
-  };
-
-  const handleBlur = (event: FormEvent<HTMLSpanElement>) => {
-    const newName = event.currentTarget.textContent;
-    if (newName != null && newName !== "" && newName !== "I") {
-      setName(newName);
-      localStorage.setItem("name", newName);
-    }
-  };
+  const totalString = (totals[year] ?? 0).toLocaleString();
 
   const doExport = (cb: (blob: Blob) => void) => {
     if (exportRef.current) {
@@ -83,7 +63,7 @@ export default function Results({
 
   const handleDownload = () => {
     let date = year;
-    if (date === currentYear) {
+    if (date === CURRENT_YEAR) {
       date = formatDate();
     }
     doExport((blob) => saveAs(blob, `omac-${date}.png`));
@@ -114,34 +94,27 @@ export default function Results({
 
   return (
     <div className="results">
-      <div className="arrowContainer">
-        {Array(Math.min(Math.round(total / 1000), 1000))
+      <div className="results__arrow-container">
+        {Array(Math.min(Math.round((totals[year] ?? 0) / 1000), 1000))
           .fill(0)
           .map((_, i) => (
             <Arrow key={i} exporting={exporting} i={i} />
           ))}
-        <div className="arrowCover" />
-        <div className="count">
-          <span
-            className="name"
-            contentEditable
-            onBlur={handleBlur}
-            onFocus={handleFocus}
-          >
-            {name ?? "I"}
-          </span>{" "}
-          hit
-          <div className="totalContainer">
-            <div className="shadow" style={{ textShadow: shadow }}>
+        <div className="results__arrow-cover" />
+        <div className="results__count">
+          <NameField className="results__name" defaultValue="I" /> hit
+          <div className="results__total-container">
+            <div className="results__shadow" style={{ textShadow: shadow }}>
               {totalString}
             </div>
-            <div className="total">{totalString}</div>
-            arrow{total === 1 ? "" : "s"} in {year}!
+            <div className="results__total">{totalString}</div>
+            arrow{totals[year] === 1 ? "" : "s"} in{" "}
+            <YearSelect className="results__year" />!
           </div>
         </div>
       </div>
-      <div className="url">jatw.us/omac</div>
-      <div className="share">
+      <div className="results__url">jatw.us/omac</div>
+      <div className="results__share">
         <button onClick={handleCopy}>
           <img alt="" src={copy} />
           {copied ? "Copied!" : "Copy"}
