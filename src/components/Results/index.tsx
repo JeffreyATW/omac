@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { saveAs } from "file-saver";
 import Arrow from "../Arrow";
 import { useAtom, useAtomValue } from "jotai";
@@ -35,9 +35,14 @@ export default function Results({
   exportRef: React.RefObject<HTMLDivElement | null>;
   totals: Totals;
 }) {
+  const wobble = useRef<number>(null);
   const [copied, setCopied] = useState(false);
   const year = useAtomValue(yearAtom);
   const [exporting, setExporting] = useAtom(exportingAtom);
+
+  if (wobble.current == null) {
+    wobble.current = Math.random() * 10;
+  }
 
   const totalString = (totals[year] ?? 0).toLocaleString();
 
@@ -101,7 +106,10 @@ export default function Results({
             <Arrow key={i} exporting={exporting} i={i} />
           ))}
         <div className="results__arrow-cover" />
-        <div className="results__count">
+        <div
+          className="results__count"
+          style={{ animationDelay: `-${wobble.current}s` }}
+        >
           <NameField className="results__name" defaultValue="I" /> hit
           <div className="results__total-container">
             <div className="results__shadow" style={{ textShadow: shadow }}>
@@ -109,7 +117,7 @@ export default function Results({
             </div>
             <div className="results__total">{totalString}</div>
             arrow{totals[year] === 1 ? "" : "s"} in{" "}
-            <YearSelect className="results__year" />!
+            {exporting ? year : <YearSelect className="results__year" />}!
           </div>
         </div>
       </div>
