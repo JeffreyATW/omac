@@ -5,9 +5,31 @@
   z-index: 1;
 }
 
+.dropzone,
+.exporting {
+  background: linear-gradient(
+    to bottom,
+    rgb(181, 222, 255),
+    rgb(242, 199, 212),
+    rgb(255, 246, 219)
+  );
+}
+
 .dropzone {
   inset: 0;
   position: fixed;
+}
+
+.andre-mode {
+  &,
+  & .exporting {
+    background: url("assets/andre.gif");
+    background-size: cover;
+  }
+
+  & .title {
+    color: white;
+  }
 }
 
 .contents {
@@ -21,13 +43,6 @@
 }
 
 .exporting {
-  background: linear-gradient(
-    to bottom,
-    rgb(181, 222, 255),
-    rgb(242, 199, 212),
-    rgb(255, 246, 219)
-  );
-
   & .results__url {
     display: block;
   }
@@ -37,10 +52,18 @@
   }
 }
 
+.andre,
 .copyright {
   bottom: 0.5rem;
   font-style: normal;
   position: fixed;
+}
+
+.andre {
+  left: 0.5rem;
+}
+
+.copyright {
   right: 0.5rem;
 
   & a {

@@ -4,7 +4,7 @@ import "./App.css";
 import Instructions from "./components/Instructions";
 import Results from "./components/Results";
 import { useAtomValue } from "jotai";
-import { exportingAtom } from "./state";
+import { exportingAtom, yearAtom } from "./state";
 import { Totals } from "./types";
 
 const unwrapValue = <T,>(value: T | T[]) => {
@@ -17,8 +17,14 @@ const unwrapValue = <T,>(value: T | T[]) => {
 function App() {
   const exportRef = useRef<HTMLDivElement>(null);
   const [totals, setTotals] = useState<Totals | null>(null);
+  const year = useAtomValue(yearAtom);
+  const [andreMode, setAndreMode] = useState(false);
 
   const exporting = useAtomValue(exportingAtom);
+
+  const overOneMillion = totals && totals[year] >= 1_000_000;
+
+  const shouldShowAndre = andreMode && overOneMillion;
 
   const [isPending, startTransition] = useTransition();
 
@@ -82,7 +88,7 @@ function App() {
       />
       <div
         {...getRootProps({
-          className: "dropzone",
+          className: `dropzone ${shouldShowAndre ? "andre-mode" : ""}`,
         })}
       >
         <input
@@ -103,6 +109,15 @@ function App() {
             <Instructions open={open} />
           ) : (
             <Results exportRef={exportRef} totals={totals} />
+          )}
+          {overOneMillion && (
+            <label className="andre">
+              <input
+                onChange={() => setAndreMode(!andreMode)}
+                type="checkbox"
+              />{" "}
+              Eric Andre mode
+            </label>
           )}
           <address className="copyright">
             © <a href="https://jeffreyatw.com">JeffreyATW</a>.{" "}

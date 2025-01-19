@@ -4,12 +4,6 @@
   font-weight: 400;
 
   color: #213547;
-  background: linear-gradient(
-    to bottom,
-    rgb(181, 222, 255),
-    rgb(242, 199, 212),
-    rgb(255, 246, 219)
-  );
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
