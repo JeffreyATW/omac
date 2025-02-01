@@ -5,7 +5,8 @@ import Instructions from "./components/Instructions";
 import Results from "./components/Results";
 import { useAtomValue } from "jotai";
 import { exportingAtom, yearAtom } from "./state";
-import { Delta, Totals } from "./types";
+import { Delta, DeltaType, Totals } from "./types";
+import isEqual from "lodash.isequal";
 
 const unwrapValue = <T,>(value: T | T[]) => {
   if (Array.isArray(value)) {
@@ -36,6 +37,7 @@ function App() {
   const year = useAtomValue(yearAtom);
   const [andreMode, setAndreMode] = useState(false);
   const [showDelta, setShowDelta] = useState(false);
+  const [deltaType, setDeltaType] = useState<DeltaType>("set");
 
   const exporting = useAtomValue(exportingAtom);
 
@@ -74,15 +76,15 @@ function App() {
         }
       });
 
+      let latestYear: string | undefined;
       parsedFiles.forEach((parsed, i) => {
         const { DateTime, Score, Steps } = parsed;
-        let year: string;
         let sessionTotal = 0;
         if (DateTime != null) {
-          year = unwrapValue<string>(DateTime).substring(0, 4);
+          latestYear = unwrapValue<string>(DateTime).substring(0, 4);
           sessionTotal = unwrapValue(Steps);
         } else {
-          year = Score.DateTime.substring(0, 4);
+          latestYear = Score.DateTime.substring(0, 4);
           Object.entries(Score.TapNoteScores ?? {}).forEach(
             ([label, value]) => {
               if (label.match(/^W[0-9]+$/)) {
@@ -92,12 +94,13 @@ function App() {
           );
         }
         if (i !== 0 && i === parsedFiles.length - 1) {
-          setDelta([year, sessionTotal]);
+          setDelta([latestYear, sessionTotal]);
+          setDeltaType("set");
         }
-        if (countsByYear[year] == null) {
-          countsByYear[year] = [sessionTotal];
+        if (countsByYear[latestYear] == null) {
+          countsByYear[latestYear] = [sessionTotal];
         } else {
-          countsByYear[year].push(sessionTotal);
+          countsByYear[latestYear].push(sessionTotal);
         }
       });
 
@@ -107,6 +110,31 @@ function App() {
         });
       });
 
+      let prevTotals: Totals | undefined;
+      if (latestYear != null) {
+        const totalsItem = localStorage.getItem("totals");
+        if (totalsItem != null) {
+          try {
+            prevTotals = JSON.parse(totalsItem);
+            // eslint-disable-next-line no-empty
+          } catch (_) {}
+          if (prevTotals != null) {
+            const prevYears = Object.keys(prevTotals);
+
+            const latestPrevYear = prevYears[prevYears.length - 1];
+            if (latestPrevYear === latestYear) {
+              const prevTotal = prevTotals[latestYear];
+              if (prevTotal !== totals[latestYear]) {
+                setDelta([latestYear, totals[latestYear] - prevTotal]);
+                setDeltaType("upload");
+              }
+            }
+          }
+        }
+      }
+      if (prevTotals == null || !isEqual(prevTotals, totals)) {
+        localStorage.setItem("totals", JSON.stringify(totals));
+      }
       setTotals(totals);
     });
 
@@ -160,7 +188,7 @@ function App() {
                   onChange={() => setShowDelta(!showDelta)}
                   type="checkbox"
                 />{" "}
-                Show delta since last set
+                Show delta since last {deltaType}
               </label>
             )}
             {overOneMillion && (
