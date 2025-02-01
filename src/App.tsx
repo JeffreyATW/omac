@@ -149,7 +149,7 @@ function App() {
           ) : (
             <Results
               exportRef={exportRef}
-              deltas={showDelta && deltas}
+              deltas={showDelta && deltas != null ? deltas : undefined}
               totals={totals}
             />
           )}
