@@ -9,7 +9,7 @@ import html2canvas from "../../vendor/html2canvas";
 import copy from "../../assets/copy.svg";
 import download from "../../assets/download.svg";
 import { CURRENT_YEAR } from "../../services/constants";
-import { Totals } from "../../types";
+import { Delta, Totals } from "../../types";
 import NameField from "../NameField";
 import YearSelect from "../YearSelect";
 
@@ -29,11 +29,11 @@ for (let i = 0; i < 10; i++) {
 }
 
 export default function Results({
-  deltas,
+  delta,
   exportRef,
   totals,
 }: {
-  deltas?: Totals;
+  delta?: Delta;
   exportRef: React.RefObject<HTMLDivElement | null>;
   totals: Totals;
 }) {
@@ -119,8 +119,8 @@ export default function Results({
             </div>
             <div className="results__number-container">
               <div className="results__total">{totalString}</div>
-              {deltas != null && deltas[year] != null ? (
-                <div className="results__delta">+{deltas[year]}</div>
+              {delta != null && delta[0] === year ? (
+                <div className="results__delta">+{delta[1]}</div>
               ) : null}
             </div>
             arrow{totals[year] === 1 ? "" : "s"} in{" "}

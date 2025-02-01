@@ -5,7 +5,7 @@ import Instructions from "./components/Instructions";
 import Results from "./components/Results";
 import { useAtomValue } from "jotai";
 import { exportingAtom, yearAtom } from "./state";
-import { Totals } from "./types";
+import { Delta, Totals } from "./types";
 
 const unwrapValue = <T,>(value: T | T[]) => {
   if (Array.isArray(value)) {
@@ -32,7 +32,7 @@ type ParsedFile =
 function App() {
   const exportRef = useRef<HTMLDivElement>(null);
   const [totals, setTotals] = useState<Totals | null>(null);
-  const [deltas, setDeltas] = useState<Totals | null>(null);
+  const [delta, setDelta] = useState<Delta | null>(null);
   const year = useAtomValue(yearAtom);
   const [andreMode, setAndreMode] = useState(false);
   const [showDelta, setShowDelta] = useState(false);
@@ -49,7 +49,6 @@ function App() {
     startTransition(async () => {
       const countsByYear: Record<string, number[]> = {};
       const totals: Totals = {};
-      const deltas: Totals = {};
 
       const files = await Promise.all(
         [...(acceptedFiles ?? [])]?.map(
@@ -65,48 +64,49 @@ function App() {
         )
       );
 
+      const parsedFiles: ParsedFile[] = [];
+
       files.forEach((file) => {
         try {
-          const parsed = JSON.parse(file) as ParsedFile;
-          const { DateTime, Score, Steps } = parsed;
-          if (DateTime != null) {
-            const year = unwrapValue<string>(DateTime).substring(0, 4);
-            if (countsByYear[year] == null) {
-              countsByYear[year] = [unwrapValue(Steps)];
-            } else {
-              countsByYear[year].push(unwrapValue(Steps));
-            }
-          } else {
-            const year = Score.DateTime.substring(0, 4);
-            let sessionTotal = 0;
-            Object.entries(Score.TapNoteScores ?? {}).forEach(
-              ([label, value]) => {
-                if (label.match(/^W[0-9]+$/)) {
-                  sessionTotal += value;
-                }
-              }
-            );
-            if (countsByYear[year] == null) {
-              countsByYear[year] = [sessionTotal];
-            } else {
-              countsByYear[year].push(sessionTotal);
-            }
-          }
+          parsedFiles.push(JSON.parse(file));
         } catch (_) {
           return;
         }
       });
 
+      parsedFiles.forEach((parsed, i) => {
+        const { DateTime, Score, Steps } = parsed;
+        let year: string;
+        let sessionTotal = 0;
+        if (DateTime != null) {
+          year = unwrapValue<string>(DateTime).substring(0, 4);
+          sessionTotal = unwrapValue(Steps);
+        } else {
+          year = Score.DateTime.substring(0, 4);
+          Object.entries(Score.TapNoteScores ?? {}).forEach(
+            ([label, value]) => {
+              if (label.match(/^W[0-9]+$/)) {
+                sessionTotal += value;
+              }
+            }
+          );
+        }
+        if (i !== 0 && i === parsedFiles.length - 1) {
+          setDelta([year, sessionTotal]);
+        }
+        if (countsByYear[year] == null) {
+          countsByYear[year] = [sessionTotal];
+        } else {
+          countsByYear[year].push(sessionTotal);
+        }
+      });
+
       Object.entries(countsByYear).forEach(([year, counts]) => {
-        counts.forEach((count, i) => {
-          if (i !== 0 && i === counts.length - 1) {
-            deltas[year] = count;
-          }
+        counts.forEach((count) => {
           totals[year] = (totals[year] ?? 0) + count;
         });
       });
 
-      setDeltas(deltas);
       setTotals(totals);
     });
 
@@ -149,12 +149,12 @@ function App() {
           ) : (
             <Results
               exportRef={exportRef}
-              deltas={showDelta && deltas != null ? deltas : undefined}
+              delta={showDelta && delta != null ? delta : undefined}
               totals={totals}
             />
           )}
           <div className="settings">
-            {deltas != null && (
+            {delta != null && (
               <label>
                 <input
                   onChange={() => setShowDelta(!showDelta)}
