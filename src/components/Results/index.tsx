@@ -29,9 +29,11 @@ for (let i = 0; i < 10; i++) {
 }
 
 export default function Results({
+  deltas,
   exportRef,
   totals,
 }: {
+  deltas?: Totals;
   exportRef: React.RefObject<HTMLDivElement | null>;
   totals: Totals;
 }) {
@@ -115,7 +117,12 @@ export default function Results({
             <div className="results__shadow" style={{ textShadow: shadow }}>
               {totalString}
             </div>
-            <div className="results__total">{totalString}</div>
+            <div className="results__number-container">
+              <div className="results__total">{totalString}</div>
+              {deltas != null && deltas[year] != null ? (
+                <div className="results__delta">+{deltas[year]}</div>
+              ) : null}
+            </div>
             arrow{totals[year] === 1 ? "" : "s"} in{" "}
             {exporting ? year : <YearSelect className="results__year" />}!
           </div>

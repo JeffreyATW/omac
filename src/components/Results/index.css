@@ -49,6 +49,12 @@
   text-shadow: none;
 }
 
+.results__number-container {
+  margin: 0 auto;
+  position: relative;
+  width: fit-content;
+}
+
 .results__total {
   background-image: radial-gradient(circle, yellow, red);
   color: transparent;
@@ -62,6 +68,16 @@
   opacity: 0.3;
   position: absolute;
   width: 100%;
+}
+
+.results__delta {
+  color: green;
+  font-size: 1rem;
+  left: calc(100% + 0.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  position: absolute;
+  z-index: 1;
 }
 
 .results__url,

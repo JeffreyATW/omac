@@ -52,14 +52,14 @@
   }
 }
 
-.andre,
+.settings,
 .copyright {
   bottom: 0.5rem;
   font-style: normal;
   position: fixed;
 }
 
-.andre {
+.settings {
   left: 0.5rem;
 }
 
