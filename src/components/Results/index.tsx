@@ -120,7 +120,7 @@ export default function Results({
             <div className="results__number-container">
               <div className="results__total">{totalString}</div>
               {delta != null && delta[0] === year ? (
-                <div className="results__delta">+{delta[1]}</div>
+                <div className="results__delta">(+{delta[1]})</div>
               ) : null}
             </div>
             arrow{totals[year] === 1 ? "" : "s"} in{" "}
