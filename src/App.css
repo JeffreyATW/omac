@@ -31,10 +31,6 @@
     background: url("assets/andre.gif");
     background-size: cover;
   }
-
-  & .title {
-    color: white;
-  }
 }
 
 .contents {
