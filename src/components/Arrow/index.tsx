@@ -15,7 +15,7 @@ export default function Arrow({
   const direction = useRef<string>(null);
 
   if (transform.current === null) {
-    transform.current = Math.random() * (1 - 0.4) + 0.4;
+    transform.current = Math.random() * (1 - 0.6) + 0.6;
   }
 
   if (scale.current === null) {
@@ -30,7 +30,7 @@ export default function Arrow({
     direction.current = Math.random() < 0.5 ? "reverse" : "normal";
   }
 
-  const translate = transform.current * 500;
+  const translate = transform.current * 600;
 
   if (exporting) {
     return (
