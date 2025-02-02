@@ -30,14 +30,23 @@ type ParsedFile =
       Steps: never;
     };
 
+const showDeltaItem = localStorage.getItem("showDelta");
+
 function App() {
   const exportRef = useRef<HTMLDivElement>(null);
   const [totals, setTotals] = useState<Totals | null>(null);
   const [delta, setDelta] = useState<Delta | null>(null);
   const year = useAtomValue(yearAtom);
   const [andreMode, setAndreMode] = useState(false);
-  const [showDelta, setShowDelta] = useState(false);
+  const [showDelta, setShowDelta] = useState(
+    showDeltaItem === "true" ? true : false
+  );
   const [deltaType, setDeltaType] = useState<DeltaType>("set");
+
+  const handleShowDeltaChange = () => {
+    setShowDelta(!showDelta);
+    localStorage.setItem("showDelta", String(!showDelta));
+  };
 
   const exporting = useAtomValue(exportingAtom);
 
@@ -185,7 +194,8 @@ function App() {
             {delta != null && (
               <label>
                 <input
-                  onChange={() => setShowDelta(!showDelta)}
+                  checked={showDelta}
+                  onChange={handleShowDeltaChange}
                   type="checkbox"
                 />{" "}
                 Show delta since last {deltaType}
@@ -194,6 +204,7 @@ function App() {
             {overOneMillion && (
               <label>
                 <input
+                  checked={andreMode}
                   onChange={() => setAndreMode(!andreMode)}
                   type="checkbox"
                 />{" "}
