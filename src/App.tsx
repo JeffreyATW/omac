@@ -134,8 +134,11 @@ function App() {
             if (latestPrevYear === latestYear) {
               const prevTotal = prevTotals[latestYear];
               if (prevTotal !== totals[latestYear]) {
-                setDelta([latestYear, totals[latestYear] - prevTotal]);
-                setDeltaType("upload");
+                const newDelta = totals[latestYear] - prevTotal;
+                if (newDelta > 0) {
+                  setDelta([latestYear, newDelta]);
+                  setDeltaType("upload");
+                }
               }
             }
           }
