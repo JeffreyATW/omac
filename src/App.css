@@ -6,7 +6,7 @@
   position: relative;
   text-transform: uppercase;
   -webkit-text-fill-color: white;
-  -webkit-text-stroke: 1px black;
+  -webkit-text-stroke: 1.5px black;
   z-index: 1;
 }
 
