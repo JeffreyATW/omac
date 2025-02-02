@@ -1,7 +1,12 @@
 .title {
-  font-size: 2rem;
-  font-variant: small-caps;
+  color: white;
+  font-family: "Jersey 15", sans-serif;
+  font-size: 3rem;
+  margin: 1rem;
   position: relative;
+  text-transform: uppercase;
+  -webkit-text-fill-color: white;
+  -webkit-text-stroke: 1px black;
   z-index: 1;
 }
 
